@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Історичний Тест</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #quiz-container {
+            display: none;
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #question-container {
+            margin-bottom: 20px;
+        }
+        .answer {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .answer.correct {
+            background-color: #4caf50;
+            color: white;
+        }
+        .answer.wrong {
+            background-color: #f44336;
+            color: white;
+        }
+        #score-container {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="intro-container">
+        <h2>Введіть ваше ім'я</h2>
+        <input type="text" id="username-input" placeholder="Ваше ім'я">
+        <button onclick="startQuiz()">Почати тест</button>
+    </div>
+
+    <div id="quiz-container">
+        <div id="score-container">Гравець: <span id="player-name"></span>, Балів: <span id="score">0</span></div>
+        <div id="question-container">
+            <h3 id="question"></h3>
+            <div id="answers"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "В якому році відбулася битва під Полтавою?",
+                answers: ["1709", "1710", "1699", "1721"],
+                correct: 0
+            },
+            {
+                question: "Коли проголошено незалежність України?",
+                answers: ["1990", "1991", "1989", "1992"],
+                correct: 1
+            },
+            {
+                question: "Хто був першим гетьманом України?",
+                answers: ["Іван Мазепа", "Богдан Хмельницький", "Петро Сагайдачний", "Пилип Орлик"],
+                correct: 1
+            },
+            {
+                question: "Коли відбулася Хмельниччина?",
+                answers: ["1648-1657", "1700-1721", "1730-1740", "1768-1774"],
+                correct: 0
+            },
+            {
+                question: "Хто написав 'Заповіт'?",
+                answers: ["Іван Франко", "Леся Українка", "Михайло Коцюбинський", "Тарас Шевченко"],
+                correct: 3
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startQuiz() {
+            const username = document.getElementById("username-input").value;
+            if (username.trim() !== "") {
+                document.getElementById("intro-container").style.display = "none";
+                document.getElementById("quiz-container").style.display = "block";
+                document.getElementById("player-name").textContent = username;
+                showQuestion();
+            }
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById("question").textContent = question.question;
+            const answersContainer = document.getElementById("answers");
+            answersContainer.innerHTML = '';
+            question.answers.forEach((answer, index) => {
+                const answerElement = document.createElement("div");
+                answerElement.classList.add("answer");
+                answerElement.textContent = answer;
+                answerElement.onclick = () => checkAnswer(index);
+                answersContainer.appendChild(answerElement);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const correctIndex = questions[currentQuestionIndex].correct;
+            const answers = document.getElementsByClassName("answer");
+            if (selectedIndex === correctIndex) {
+                answers[selectedIndex].classList.add("correct");
+                score++;
+                document.getElementById("score").textContent = score;
+            } else {
+                answers[selectedIndex].classList.add("wrong");
+                answers[correctIndex].classList.add("correct");
+            }
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function endQuiz() {
+            document.getElementById("quiz-container").innerHTML = `
+                <h2>Тест завершено!</h2>
+                <p>Ви набрали ${score} з ${questions.length} балів.</p>
+            `;
+        }
+    </script>
+</body>
+</html>
